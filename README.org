@@ -1,0 +1,253 @@
+#+OPTIONS: toc:nil num:0
+
+#+TITLE: CS Python Workshop 1: PyCharm and Types
+* Reminder
+
+These are workshops for us as a department to develop a common understanding of the technology we will be teaching. Not everything in the workshops will be taught to science students.
+
+* PyCharm
+
+** PyCharm overview
+*** Get it from: https://www.jetbrains.com/pycharm/.
+*** Community edition is the free version.
+*** "Cousin" of IntelliJ IDEA (java), Android Studio and others.
+*** Platforms: Windows, macOS and Linux.
+*** Specific to python programming.
+** TODO Activity: clone starter in pycharm
+URL
+** Project structure overview:
+*** What is a PyCharm project?
+*** PyCharm has a flexible idea of a project.
+*** Opening a folder in pycharm automatically makes it a project.
+*** Hidden ~.idea~ folder indicates a project.
+*- Can't "double-click" it in file explorers
+*** Tip for console users
+
+In bash/macOS: use an alias to open pycharm.
+
+#+begin_src bash
+> alias pycharm='open -a /Applications/PyCharm\ CE.app/'
+> pycharm path/to/project
+#+end_src
+
+
+** Python interpreter
+*** Setting the interpreter
+*** Switching interpreters
+*** Always check that an interpreter is set
+- Not indicated and can have some odd error messaging.
+*** System vs. local interpreter
+- system :: installed on machine
+- local :: installed as virtual environment
+** Virtual Environment
+- Install python packages in the project folder instead of system folder.
+- Possibly the most relevant reason for us:
+- ~venv~ or ~.venv~ in project
+- Not considered movable. Not committed to repo. Recreated from scratch.
+*** References:
+- "Creation of virtual environments"  https://docs.python.org/3/library/venv.html#venv-def
+- "Python Virtual Environments: A Primer" https://realpython.com/python-virtual-environments-a-primer/
+
+** Run configuration vs. Run current file
+*** Run [[file:01_hello_world.py][01_hello_world.py]]
+*** Running the current file
+- Just that: run current file.
+*** Run ~▶~
+- In the left margin of the editor you will see a ~▶~.
+- pycharm is detecting an execution point in the file.
+- Running this will add it to the drop-down at the top of the window. These are called "run configurations".
+- Run configurations configurable. Ex: you can pass arguments to your configurations.
+*** References
+-https://www.jetbrains.com/help/pycharm/run-debug-configuration.html
+*** Dive deeper
+**** Why ~__name__ == "~__main__"~?
+**** Including run configurations in your repo.
+- By default configurations are not stored in version control.
+- https://www.jetbrains.com/help/pycharm/run-debug-configuration.html#share-configurations
+
+** Installing dependencies.
+*** Installing by fixing an error.
+- In the file [[file:02_sample_pytest.py][02_sample_pytest.py]]
+*** Install dependencies manually:
+1. In pycharm, open "Terminal". Notice the ~(venv)~ if you are working in a virtual environment.
+2. Use pip to install:  ~> pip install numpy~
+
+** TODO Inspections
+Move to after types???
+*** Linting
+- Both compilers and linters: check syntax, type check
+- Compilers generate code.
+- Linters also chec style errors, code smell / bad code.
+*** Inspection Severity
+- Errors :: Syntax errors: showstoppers that will be runtime errors if executed.
+- Warnings :: Might be an error. To fix!
+- Weak Warnings :: Not an error, but code that could be improved.
+*** Errors don't prevent the running of code.
+- There are errors [[file:03_inspections.py][03_inspections.py]]
+- We can still run the other code examples.
+- We can still run main in 03_inspections.py!
+*** References
+- https://www.jetbrains.com/help/pycharm/configuring-inspection-severities.html
+*** Dive Deeper
+- Configuring inspections https://www.jetbrains.com/help/pycharm/inspections-settings.html
+
+** REPL
+*** Read-Execute-Print-Loop
+*** Install ~ipython~ in terminal.
+*** Why REPL?
+*** TODO Tips for REPL
+
+~dir(foo)~
+
+*** Dive Deeper
+- ~type~, ~id~, ~dis~
+- dis: disassemble, link to sandys article on btycode
+* TODO Types
+
+** Dynamic typing
+
+This is allowed in python:
+
+#+begin_src python
+x = 123
+x = "abc"
+x = [1, 2, 3]
+#+end_src
+
+But:
+
+- Just cause we can doesn't mean we should.
+- This does not mean python doesn't have types.
+
+** Python has types
+
+Try this in the REPL
+
+#+begin_src python
+>>> x = 123
+>>> type(x)
+>>> x = "abc"
+>>> type(x)
+>>> x = [1, 2, 3]
+>>> type(x)
+#+end_src
+
+The values have types, the variable (name) ~x~ does not.
+
+#+begin_src  
+        +-----------------------+
+        | type: str             |
+[x] -->  | value: "abc"          |
+        | refcount: 1           |
+        +-----------------------+
+#+end_src
+
+- The function ~isinstance~ can check a type at runtime.
+
+#+begin_src python
+def test_return_type_correct():
+    assert isinstance(asg1_sol(), float)
+#+end_src
+
+
+*** References:
+
+- https://www.youtube.com/watch?v=_AEJHKGk9ns
+
+** Built-in types
+
+*** There are:
+
+| type    | what might be different for you |
+|---------+---------------------------------|
+| ~int~     | No overflow, like an big-int    |
+| ~float~   | 64-bit. There is no ~double~ type |
+| ~str~     | String data type                |
+| ~bool~    | Values ~True~ and ~False~           |
+
+
+Some other important types:
+
+- Collections: ~range~, ~list~, ~set~, ~tuple~, ~dict~
+- Misc: ~complex~ for complex numbers, binary types, ~None~ (like ~null~).
+- Callables: functions and methods
+
+*** Dive Deeper
+
+- Types, Modules and Code itself are objects in python. https://docs.python.org/3/library/stdtypes.html#other-built-in-types
+
+
+** Duck typing
+
+"If it looks like a duck, quacks like a duck, it's a duck"
+
+#+begin_src python
+def many_pop(collection, amount):
+    for i in range(amount):
+        if len(collection) == 0:
+            return
+        collection.pop()
+#+end_src
+
+What kinds of collections can we ~many_pop~? Those with operations ~pop~ and ~len~ (technically ~__len__~).
+
+A stack class would support these, but turns out built-in's ~list~,  ~set~ and ~dict~ do too!
+
+
+** Type Hints
+- For variables:
+
+  #+begin_src python
+x: int = 123
+y: float = 3.14
+n: str = "ian"
+  #+end_src
+
+- For functions:
+
+  #+begin_src python
+def add(x: int, y: int) -> int:
+    return x + y
+
+def debug(message: str) -> None:
+    print(message, file=error_log)
+  #+end_src
+
+- We've been dropping ~-> None~ in our courses.
+
+** Types and OOP
+
+- Classes, protocols (interfaces), enums are all types:
+
+#+begin_src python
+class Stack:
+    ...
+
+
+def combine(s1: Stack, s2: Stack) -> Stack:
+#+end_src
+
+- More on objects in later workshops.
+
+** Optionals
+
+Optional types allow for ~None~ values.
+
+#+begin_src python
+def index_of(data: list[str], value: str) -> Optional[int]:
+    pass
+#+end_src
+
+** Why bother with types?
+
+1. Detecting errors when the linting.
+2. Additional information about our code.
+3. Reasoning about code.
+4. IDE lists available operation.
+
+** Dive Deeper:
+
+- Generics and type arguments, ex: ~list[str]~ or "list of strings".
+- Protocols (interfaces).
+- Union types.
+- ~isintance~ operator.
